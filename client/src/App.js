@@ -6,6 +6,7 @@ import Home from './booking/Home';
 import Topnav from './components/Topnav';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ProtectedRoute from './components/ProtectedRoute';
 
 
 function App() {
@@ -17,7 +18,9 @@ function App() {
         <Route index element={<App />} />
         <Route path='register' element={<Register />} />
         <Route path='login' element={<Login />} />
-        <Route path='home' element={<Home />} />
+        <Route path='home' element={<ProtectedRoute>
+          <Home />
+        </ProtectedRoute>} />
     </Routes>
 </BrowserRouter>
   );

@@ -1,18 +1,31 @@
 import React from 'react'
+import { useDispatch, useSelector } from "react-redux";
 
 const Topnav = () => {
+  const {user} = useSelector((state) => state.auth)
+  const dispatch = useDispatch()
+  //console.log('topnav',user)
   return (
     <div>
      <ul className='display-flex'>
-      <li>
-        home
-      </li>
-      <li>
-        register
-      </li>
-      <li>
-        login
-      </li>
+     {user && 
+        <li>
+           home
+        </li>
+     }
+     {!user && 
+      <>
+         <li>
+           register
+        </li>
+       <li>
+         login
+       </li>
+      </>
+     }
+        
+      
+     
     </ul>
     </div>
   )
