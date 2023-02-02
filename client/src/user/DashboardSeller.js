@@ -16,8 +16,9 @@ const DashboardSeller = () => {
 
   const handleClick = async () => {
     try{
-      const res = await createConnectAccount(user.token)
-      console.log(res)
+      let response = await createConnectAccount(user.token)
+      console.log('response',response)
+      window.location.href = response.data
     } catch(error){
       console.log(error)
       toast.error('Something went wrong')
