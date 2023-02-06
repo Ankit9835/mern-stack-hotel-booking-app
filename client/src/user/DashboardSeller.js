@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createConnectAccount } from "../actions/stripe";
+import ConnectNav from "../components/ConnectNav";
 import DashboardNav from "../components/DashboardNav";
 import StripeConnected from "../components/StripeConnected";
 import StripeUnConnected from "../components/StripeUnConnected";
@@ -28,7 +29,7 @@ const DashboardSeller = () => {
   return (
     <>
       <div className="container-fluid bg-secondary p-5">
-        <h1>Dashboard</h1>
+      <ConnectNav />
       </div>
 
       <div className="container-fluid p-4">

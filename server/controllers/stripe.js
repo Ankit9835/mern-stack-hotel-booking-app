@@ -3,7 +3,6 @@ import User from "../models/userModel.js";
 const stripe = Stripe(process.env.STRIPE_SECRET);
 import queryString from "query-string";
 
-
 export const connectWithStripe = async (req,res) => {
     const user = await User.findById(req.user._id).exec();
     if(!user.stripe_account_id){
@@ -31,12 +30,16 @@ export const connectWithStripe = async (req,res) => {
     // 4. update payment schedule (optional. default is 2 days
 }
 
+
+
 export const getStripeDetails = async (req,res) => {
     try {
         const user = await User.findById(req.user._id).select("-password")
         //console.log(user)
         const account = await stripe.accounts.retrieve(user.stripe_account_id)
         //console.log('Getting stripe account information', account)
+       // const updatedAccount = await updateDelayDays(account.id)
+       // console.log('updated account', updatedAccount)
         const updatedUser = await User.findByIdAndUpdate(user._id,
         {
             stripe_seller: account
@@ -46,6 +49,44 @@ export const getStripeDetails = async (req,res) => {
         console.log('updated user', updatedUser)
         res.send(updatedUser)
     } catch (error) {
+        console.log(error)
+    }
+}
+// const updateDelayDays = async (accountId) => {
+//     const account = await stripe.accounts.update(accountId, {
+//       settings: {
+//         payouts: {
+//           schedule: {
+//             delay_days: 7,
+//           },
+//         },
+//       },
+//     });
+//     return account;
+//   };
+
+export const getAccountBalance = async (req,res) => {
+    const user = await User.findById(req.user._id).select("-password")
+    try{
+        const balance = await stripe.balance.retrieve({
+            stripeAccount: user.stripe_account_id
+        })
+        console.log('balance',balance)
+        res.json(balance)
+    } catch(error){
+        
+    }
+}
+
+export const payoutSetting = async (req,res) => {
+    try{
+        const user = await User.findById(req.user._id).select("-password")
+       
+        const response = await stripe.accounts.createLoginLink(user.stripe_seller.id,{
+            redirect_url:process.env.STRIPE_SETTING_REDIRECT_URL
+        })
+        console.log('payout response', response)
+    } catch(error){
         console.log(error)
     }
 }

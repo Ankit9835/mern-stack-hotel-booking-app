@@ -22,6 +22,7 @@ const StripeCallBack = () => {
             updateUserInLocalStorage(res.data,()=>{
                 dispatch(loginUser(res.data))
             })
+            window.location.href = '/dashboard/seller'
         } catch (err) {
             console.log(err);
         }
