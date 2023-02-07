@@ -3,6 +3,7 @@ dotenv.config()
 import express from 'express'
 import router from './routes/auth.js'
 import stripe from './routes/stripe.js'
+import hotel from './routes/hotel.js'
 import morgan from 'morgan'
 import cors from "cors";
 import {readdirSync} from 'fs'
@@ -14,6 +15,7 @@ app.use(cors())
 app.use(morgan("dev"))
 app.use('/api', router)
 app.use('/api', stripe)
+app.use('/api', hotel)
 const port =  process.env.port
 
 const start = async () => {
