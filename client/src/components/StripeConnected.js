@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { sellerHotels } from '../actions/hotel'
 import axios from 'axios'
 import SmallCard from './SmallCard'
+import { toast } from 'react-toastify'
 
 
 const StripeConnected = () => {
@@ -24,6 +25,25 @@ const StripeConnected = () => {
     }
   }
 
+  const removeHotel = async (hotelId) => {
+    try {
+      const response = await axios.delete(`${process.env.REACT_APP_API}/remove-hotel/${hotelId}`,{
+        headers:{
+          Authorization: `Bearer ${user.token}`
+        }
+      })
+      if(response){
+        toast.success('hotel removed successfully')
+        getData()
+      } else {
+        toast.error('something went wrong')
+      }
+    } catch (error) {
+        console.log(error)
+        toast.error(error.message)
+    }
+  }
+
   useEffect(() => {
     getData()
   },[])
@@ -34,7 +54,7 @@ const StripeConnected = () => {
           <h2>Your Hotels</h2>
           
           {seller.map((hotel) => (
-          <SmallCard key={hotel._id} {...hotel} owner={true} showMoreViewButton = {false} />
+          <SmallCard key={hotel._id} {...hotel} owner={true} showMoreViewButton = {false} removeHotel={removeHotel} />
         ))}
         </div>
         <div className="col-md-2">

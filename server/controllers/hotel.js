@@ -65,3 +65,63 @@ export const sellerHotel = async (req,res) => {
         console.log(error)
     }
 }
+
+export const removeHotel = async (req,res) => {
+    try {
+        const hotel = await Hotel.findByIdAndDelete(req.params.hotelId)
+        //console.log('delete hotel',hotel)
+        res.status(200).json(hotel)
+    } catch (error) {
+        console.log(error.message)
+        res.json(error.message)
+    }
+}
+
+export const viewHotel = async (req,res) => {
+    try {
+        const hotel = await Hotel.findById(req.params.hotelId)
+        if(hotel){
+            res.status(200).json(hotel)
+        }
+    } catch (error) {
+        console.log(error.message)
+        res.status(403).json(error.message)
+    }
+}
+
+export const editHotel = async (req,res) => {
+    try {
+        const hotel = await Hotel.findById(req.params.hotelId).select('-image.data')
+        res.status(200).json(hotel)
+    } catch (error) {
+        console.log(error.message)
+        res.json(error.message)
+    }
+}
+
+export const updateHotel = async (req,res) => {
+    try {
+        let fields = req.fields;
+        console.log('fields',fields)
+        let files = req.files;
+        console.log('files',files)
+        let data = { ...fields };
+
+        if (files.image) {
+        let image = {};
+        image.data = fs.readFileSync(files.image.path);
+        image.contentType = files.image.type;
+
+        data.image = image;
+        }
+        console.log('params',req.params.hotelId)
+        console.log('data',data)
+        let updated = await Hotel.findByIdAndUpdate(req.params.hotelId, data, {
+            new: true,
+          }).select("-image.data");
+        res.json(updated)
+    } catch (error) {
+        console.log(error.message);
+         res.status(400).send(error.message);
+    }
+}
