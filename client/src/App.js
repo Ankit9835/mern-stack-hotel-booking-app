@@ -12,6 +12,7 @@ import DashboardSeller from './user/DashboardSeller';
 import NewHotel from './hotels/NewHotel';
 import StripeCallBack from './stripe/StripeCallBack';
 import EditHotel from './hotels/EditHotel';
+import ViewHotel from './hotels/ViewHotel';
 
 
 function App() {
@@ -40,6 +41,9 @@ function App() {
         </ProtectedRoute>} />
         <Route path='hotel/edit/:hotelId' element={<ProtectedRoute>
           <EditHotel />
+        </ProtectedRoute>} />
+        <Route path='view/hotel/:hotelId' element={<ProtectedRoute>
+          <ViewHotel />
         </ProtectedRoute>} />
     </Routes>
 </BrowserRouter>

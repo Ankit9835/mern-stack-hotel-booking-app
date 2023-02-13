@@ -91,7 +91,7 @@ export const viewHotel = async (req,res) => {
 
 export const editHotel = async (req,res) => {
     try {
-        const hotel = await Hotel.findById(req.params.hotelId).select('-image.data')
+        const hotel = await Hotel.findById(req.params.hotelId).populate('postedBy').select('-image.data')
         res.status(200).json(hotel)
     } catch (error) {
         console.log(error.message)
@@ -125,3 +125,4 @@ export const updateHotel = async (req,res) => {
          res.status(400).send(error.message);
     }
 }
+

@@ -66,7 +66,7 @@ const SmallCard = ({
                 {showMoreViewButton && (
                   <>
                     <button
-                      onClick={() => navigate(`/hotel/${_id}`)}
+                      onClick={() => navigate(`/view/hotel/${_id}`)}
                       className="btn btn-primary"
                     >
                       Show more

@@ -12,8 +12,9 @@ router.get('/hotel/image/:hotelId' ,  image)
 router.get('/seller/hotel' , requireSignin, sellerHotel)
 router.delete('/remove-hotel/:hotelId' , requireSignin, userAuthenticate, removeHotel)
 router.get('/view/single/hotel/:hotelId' ,  viewHotel)
-router.get('/hotel/edit/:hotelId' , requireSignin, userAuthenticate, editHotel)
+router.get('/hotel/edit/:hotelId' , requireSignin,  editHotel)
 router.put('/update/hotel/:hotelId' , requireSignin, userAuthenticate, formidable(), updateHotel)
+
 
 
 export default router
