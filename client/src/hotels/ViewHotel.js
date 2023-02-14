@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { diffDays } from "../actions/hotel";
+import { diffDays, isAlreadyBooked } from "../actions/hotel";
 import HotelEditForm from "../components/HotelEditForm";
 import moment from "moment";
 import { stripeSessionId } from "../actions/stripe";
@@ -13,7 +13,9 @@ import {loadStripe} from '@stripe/stripe-js'
 
 const ViewHotel = () => {
   const [hotel, setHotel] = useState({});
+  const [loading, setLoading] = useState(false);
   const [image,setImage] = useState("")
+  const [isBooked,setIsBooked] = useState(false)
   const navigate = useNavigate()
   const routeParams = useParams();
   const { user } = useSelector((state) => state.auth);
@@ -37,11 +39,24 @@ const ViewHotel = () => {
     setImage(`${process.env.REACT_APP_API}/hotel/image/${response.data._id}`);
   };
 
+  const checkBooking = async () => {
+    try {
+      const response = await isAlreadyBooked(user.token,routeParams.hotelId)
+      console.log('check booking',response)
+      if(response.data.ok){
+        setIsBooked(true)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleClick = async (e) => {
     e.preventDefault()
     if(!user.token){
       navigate('/login')
     }
+    setLoading(true);
    console.log('user token and params id', user.token, routeParams.hotelId)
    const response =  await stripeSessionId(user.token,routeParams.hotelId)
    console.log('stripe payment response',response)
@@ -57,6 +72,10 @@ const ViewHotel = () => {
   useEffect(() => {
     loadSellerHotel();
   }, []);
+
+  useEffect(()=>{
+    checkBooking()
+  },[])
 
   const handleImageChange = (e) => {
     console.log('image file',e.target.files[0])
@@ -102,8 +121,15 @@ const ViewHotel = () => {
             <button
               onClick={handleClick}
               className="btn btn-block btn-lg btn-primary mt-3"
+              disabled={loading || isBooked}
             >
-              {user && user.token ? "Book Now" : "Login to Book"}
+              {loading
+                ? "Loading..."
+                : isBooked
+                ? "Already Booked"
+                : user && user.token
+                ? "Book Now"
+                : "Login to Book"}
             </button>
           </div>
         </div>

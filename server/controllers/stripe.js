@@ -2,7 +2,8 @@ import Stripe from "stripe"
 import User from "../models/userModel.js";
 const stripe = Stripe(process.env.STRIPE_SECRET);
 import queryString from "query-string";
-import hotel from "../models/hotel.js";
+import Hotel from "../models/hotel.js";
+import Order from "../models/order.js"
 
 export const connectWithStripe = async (req,res) => {
     const user = await User.findById(req.user._id).exec();
@@ -93,11 +94,12 @@ export const payoutSetting = async (req,res) => {
 }
 
 export const getStripeSessionData = async  (req,res) => {
-   // console.log("you hit stripe session id", req.body.hotelId);
+  try {
+     // console.log("you hit stripe session id", req.body.hotelId);
   // 1 get hotel id from req.body
   const { hotelId } = req.body;
   // 2 find the hotel based on hotel id from db
-  const item = await hotel.findById(hotelId).populate("postedBy").exec();
+  const item = await Hotel.findById(hotelId).populate("postedBy").exec();
   // 3 20% charge as application fee
   console.log('hotel item', item.price)
   const fee = (item.price * 20) / 100;
@@ -123,7 +125,7 @@ export const getStripeSessionData = async  (req,res) => {
       },
     },
     // success and calcel urls
-    success_url: process.env.STRIPE_SUCCESS_URL,
+    success_url: `${process.env.STRIPE_SUCCESS_URL}/${item._id}`,
     cancel_url: process.env.STRIPE_CANCEL_URL,
   });
 
@@ -144,4 +146,43 @@ export const getStripeSessionData = async  (req,res) => {
   res.send({
     sessionId: session.id,
   });
+  } catch (error) {
+    console.log(error.message)
+  }
+  
+}
+
+export const stripeSuccessData = async (req,res) => {
+  try {
+    const {hotelId} = req.body
+    console.log('hotel id',hotelId)
+    const user = await User.findById(req.user._id)
+    console.log('user stripe session',Object.keys(user.stripeSession).length)
+    if(Object.keys(user.stripeSession).length === 0 && user.stripeSession.constructor === Object){
+      return res.json({success:true,
+        message:'No new session found'
+      })
+    }
+    const session = await stripe.checkout.sessions.retrieve(user.stripeSession.id)
+    if(session.payment_status == 'paid'){
+      const orderExist = await Order.findOne({"session.id":session.id})
+      if(orderExist){
+        res.json({success:true,
+          message:'Order already there'
+        })
+      } else {
+        let newOrder = await Order.create({
+          hotel:hotelId,
+          session,
+          orderedBy:user._id
+        })
+        await User.findByIdAndUpdate(user._id,{
+          $set: {stripeSession: {}}
+        })
+        res.json({ success: true });
+      }
+    }
+  } catch (error) {
+    console.log(error.message)
+  }
 }

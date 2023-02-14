@@ -1,5 +1,6 @@
 import fs from "fs";
 import Hotel from '../models/hotel.js'
+import Order from '../models/order.js'
 
 export const createHotel = async (req,res) => {
     console.log('fields', req.fields)
@@ -123,6 +124,32 @@ export const updateHotel = async (req,res) => {
     } catch (error) {
         console.log(error.message);
          res.status(400).send(error.message);
+    }
+}
+
+export const isAlreadyBooked = async (req,res) => {
+    try {
+        const {hotelId} = req.params
+        const order = await Order.find({orderedBy:req.user._id,hotel:hotelId}).select('hotel')
+        console.log('order',order)
+        if(order.length > 0){
+            // let Ids = []
+            // for(let i = 0; i < order.length; i++){
+            //     Ids.push(order[i].hotel.toString())
+            // }
+            // return res.json({
+            //     ok:Ids.includes(hotelId)
+            // })
+            return res.json({
+                ok:true
+            })
+        } else {
+            return res.json({
+                ok:false
+            })
+        }
+    } catch (error) {
+        console.log(error.message)
     }
 }
 

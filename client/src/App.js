@@ -13,6 +13,9 @@ import NewHotel from './hotels/NewHotel';
 import StripeCallBack from './stripe/StripeCallBack';
 import EditHotel from './hotels/EditHotel';
 import ViewHotel from './hotels/ViewHotel';
+import StripeSuccess from './stripe/StripeSuccess';
+import StripeCancel from './stripe/StripeCancel';
+
 
 
 function App() {
@@ -44,6 +47,12 @@ function App() {
         </ProtectedRoute>} />
         <Route path='view/hotel/:hotelId' element={<ProtectedRoute>
           <ViewHotel />
+        </ProtectedRoute>} />
+        <Route path='stripe/success/:hotelId' element={<ProtectedRoute>
+          <StripeSuccess />
+        </ProtectedRoute>} />
+        <Route path='stripe/cancel' element={<ProtectedRoute>
+          <StripeCancel />
         </ProtectedRoute>} />
     </Routes>
 </BrowserRouter>
