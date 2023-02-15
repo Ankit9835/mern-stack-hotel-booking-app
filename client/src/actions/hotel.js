@@ -36,3 +36,6 @@ export const isAlreadyBooked = async (token,hotelId) =>
       Authorization: `Bearer ${token}`
     }
   })
+
+  export const searchHotel = async (data) => 
+     await axios.post(`${process.env.REACT_APP_API}/search/hotel`, data)

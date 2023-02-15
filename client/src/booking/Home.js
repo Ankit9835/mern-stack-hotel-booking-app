@@ -4,6 +4,7 @@ import axios from 'axios';
 import SmallCard from '../components/SmallCard';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
+import Search from '../components/Search';
 
 
 const Home = () => {
@@ -47,6 +48,10 @@ const Home = () => {
     <>
        <div className="container-fluid bg-secondary p-5 text-center">
         <h1>All Hotels</h1>
+      </div>
+      <div className="col">
+        <br />
+        <Search />
       </div>
       <div className="container-fluid">
        
